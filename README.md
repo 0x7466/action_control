@@ -1,6 +1,9 @@
 ActionControl
 =============
 
+[![Build Status](https://travis-ci.org/tobiasfeistmantl/action_control.svg?branch=master)](https://travis-ci.org/tobiasfeistmantl/action_control)
+[![Gem Version](https://badge.fury.io/rb/action_control.svg)](https://badge.fury.io/rb/action_control)
+
 ActionControl is a simple and secure authorization system which let you to authorize directly in your controllers.
 
 Compatibility
