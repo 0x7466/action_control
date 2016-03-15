@@ -1,14 +1,10 @@
 require 'test_helper'
 
 class ActionControlTest < ActiveSupport::TestCase
-	def reinstatiate
+	setup do
 		@authorizable = Class.new do
 			include ActionControl
 		end
-	end
-
-	setup do
-		reinstatiate
 	end
 
 	test 'should raise `AuthorizationNotPerformedError` if #authorized? is not defined' do
@@ -38,6 +34,14 @@ class ActionControlTest < ActiveSupport::TestCase
 
 		assert_nothing_raised do
 			@authorizable.new.authorize!
+		end
+	end
+
+	test 'should return if class is a Devise controller' do
+		::DeviseController = @authorizable
+
+		assert_nothing_raised do
+			::DeviseController.new.authorize!
 		end
 	end
 end
