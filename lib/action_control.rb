@@ -9,8 +9,11 @@ module ActionControl
 		# is a Devise controller.
 		return if defined?(::DeviseController) && is_a?(::DeviseController)
 
+		# Raise an error if the #authorize? action isn't defined.
+		#
+		# This ensures that you actually do authorization in your controller. 
 		raise ActionControl::AuthorizationNotPerformedError unless defined?(authorized?)
 		
-		raise ActionControl::NotAuthorizedError unless send(:authorized?) == true
+		raise ActionControl::NotAuthorizedError unless authorized? == true
 	end
 end
