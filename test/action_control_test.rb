@@ -15,9 +15,7 @@ class ActionControlTest < ActiveSupport::TestCase
 
 	test 'should raise `NotAuthorizedError` if #authorized? not returns true' do
 		@authorizable.class_eval do
-			define_method :authorized? do
-				false
-			end
+			def authorized?; false; end
 		end
 
 		assert_raise ActionControl::NotAuthorizedError do
@@ -27,9 +25,7 @@ class ActionControlTest < ActiveSupport::TestCase
 
 	test 'should raise no exception if #authorized? returns true' do
 		@authorizable.class_eval do
-			define_method :authorized? do
-				true
-			end
+			def authorized?; true; end
 		end
 
 		assert_nothing_raised do
