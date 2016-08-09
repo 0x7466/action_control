@@ -1,6 +1,5 @@
 require 'action_control/controller_methods'
 require 'action_control/errors'
-require 'action_control/action_controller/base'
 
 module ActionControl
 	# Authorizes the user.
@@ -14,6 +13,15 @@ module ActionControl
 		# This ensures that you actually do authorization in your controller. 
 		raise ActionControl::AuthorizationNotPerformedError unless defined?(authorized?)
 		
+		# If the authorized? method does not return true
+		# it raises the ActionControl::NotAuthorizedError
+		#
+		# Use the .rescue_from method from ActionController::Base
+		# to recognize the exception raise and show the user
+		# an error message.
 		raise ActionControl::NotAuthorizedError unless authorized? == true
 	end
 end
+
+# Load action control railtie
+require 'action_control/railtie'
