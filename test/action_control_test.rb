@@ -13,7 +13,7 @@ class ActionControlTest < ActiveSupport::TestCase
 		end
 	end
 
-	test 'should raise `NotAuthorizedError` if #authorized? not returns true' do
+	test 'should raise `NotAuthorizedError` if #authorized? returns not true' do
 		@authorizable.class_eval do
 			def authorized?; false; end
 		end
@@ -33,11 +33,30 @@ class ActionControlTest < ActiveSupport::TestCase
 		end
 	end
 
-	test 'should return if class is a Devise controller' do
-		::DeviseController = @authorizable
+
+	test 'should raise `AuthenticationNotPerformedError` if #authenticated? is not defined' do
+		assert_raise ActionControl::AuthenticationNotPerformedError do
+			@authorizable.new.authenticate!
+		end
+	end
+
+	test 'should raise `NotAuthenticatedError` if #authenticated? returns not true' do
+		@authorizable.class_eval do
+			def authenticated?; false; end
+		end
+
+		assert_raise ActionControl::NotAuthenticatedError do
+			@authorizable.new.authenticate!
+		end
+	end
+
+	test 'should raise no exception if #authenticated? returns true' do
+		@authorizable.class_eval do
+			def authenticated?; true; end
+		end
 
 		assert_nothing_raised do
-			::DeviseController.new.authorize!
+			@authorizable.new.authenticate!
 		end
 	end
 end

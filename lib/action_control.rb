@@ -4,10 +4,6 @@ require 'action_control/errors'
 module ActionControl
 	# Authorizes the user.
 	def authorize!
-		# Return if the controller
-		# is a Devise controller.
-		return if defined?(::DeviseController) && is_a?(::DeviseController)
-
 		# Raise an error if the #authorize? action isn't defined.
 		#
 		# This ensures that you actually do authorization in your controller. 
@@ -17,9 +13,23 @@ module ActionControl
 		# it raises the ActionControl::NotAuthorizedError
 		#
 		# Use the .rescue_from method from ActionController::Base
-		# to recognize the exception raise and show the user
-		# an error message.
+		# to catch the exception and show the user a proper error message.
 		raise ActionControl::NotAuthorizedError unless authorized? == true
+	end
+
+	# Authenticates the user
+	def authenticate!
+		# Raise an error if the #authenticate? action isn't defined.
+		#
+		# This ensures that you actually do authentication in your controller.
+		raise ActionControl::AuthenticationNotPerformedError unless defined?(authenticated?)
+		
+		# If the authenticated? method returns not true
+		# it raises the ActionControl::NotAuthenticatedError.
+		#
+		# Use the .rescue_from method from ActionController::Base
+		# to catch the exception and show the user a proper error message.
+		raise ActionControl::NotAuthenticatedError unless authenticated? == true
 	end
 end
 

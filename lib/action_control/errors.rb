@@ -26,4 +26,31 @@ module ActionControl
 	#    of the #authorize! method.
 	class NotAuthorizedError < AuthorizationError
 	end
+
+
+	# Base class for authentication errors.
+	#
+	# @raise [AuthenticationError]
+	#    if something generic happens.
+	class AuthenticationError < StandardError
+	end
+
+	# Error for controllers in which authentication isn't handled.
+	#
+	# @raise [AuthenticationNotPerformedError]
+	#    if the #authenticated? method isn't defined
+	#    in the controller class.
+	class AuthenticationNotPerformedError < AuthenticationError
+	end
+
+	# Error if user not authenticated
+	#
+	# @raise [NotAuthenticatedError]
+	#    if authenticated? isn't returning true.
+	#
+	# @note
+	#    Should always be called at the end
+	#    of the #authenticate! method.
+	class NotAuthenticatedError < AuthenticationError
+	end
 end

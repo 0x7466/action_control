@@ -32,7 +32,7 @@ You probably want to control authorization for every controller action you have 
 class ApplicationController < ActionController::Base
 	protect_from_forgery with: :exception
 
-	before_action :authorize!
+	before_action :authenticate!, :authorize!
 end
 ```
 
@@ -45,8 +45,12 @@ class DashboardController < ApplicationController
 
 	private
 
-	def authorized?
+	def authenticated?
 		return true if user_signed_in?
+	end
+
+	def authorized?
+		return true if current_user.admin?
 	end 
 end
 ```
@@ -57,9 +61,15 @@ If the user is now signed in, he is authorized, otherwise an `ActionControl::Not
 class ApplicationController < ActionController::Base
 	# ...
 
+	rescue_from ActionControl::NotAuthenticatedError, with: :user_not_authenticated
 	rescue_from ActionControl::NotAuthorizedError, with: :user_not_authorized
 
 	private
+
+	def user_not_authenticated
+		flash[:danger] = "You are not authenticated!"
+		redirect_to root_path
+	end
 
 	def user_not_authorized
 		flash[:danger] = "You are not authorized to call this action!"
@@ -100,7 +110,7 @@ Known Issues
 
 The authorization is done in a simple before action. Before callbacks are done in a specific order. If you set something which is needed in the `authorized?` method you have to call the before action after the other method again.
 
-For example if you set `@user` in your controller in the `set_user` before action and you want to use this in `authorized?` action you have to add the `authorize!` method after the `set_user` again, otherwise `@user` won't be available in `authorized?`.
+For example if you set `@user` in your controller in the `set_user` before action and you want to use this in `authorized?` action you have to add the `authenticate!` or `authorize!` method after the `set_user` again, otherwise `@user` won't be available in `authenticate!` or `authorized?`.
 
 ```ruby
 class UsersController < ApplicationController
