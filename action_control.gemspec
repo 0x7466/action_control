@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
 	s.version               = ActionControl::VERSION
 	s.required_ruby_version = '>= 1.9.3'
 	s.authors               = ["Tobias Feistmantl"]
-	s.email                 = ["tobias@feistmantl.net"]
+	s.email                 = ["tobias@feistmantl.io"]
 	s.homepage              = "https://github.com/tobiasfeistmantl/actioncontrol"
-	s.summary               = "An access control system for your app."
-	s.description           = "Authorize your users directly in your controllers."
+	s.summary               = "A very flexible access control system for your app."
+	s.description           = "Authenticate and authorize your users directly in your controllers."
 	s.license               = "MIT"
 
 	s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]

@@ -4,12 +4,12 @@ ActionControl
 [![Build Status](https://travis-ci.org/tobiasfeistmantl/action_control.svg?branch=master)](https://travis-ci.org/tobiasfeistmantl/action_control)
 [![Gem Version](https://badge.fury.io/rb/action_control.svg)](https://badge.fury.io/rb/action_control)
 
-ActionControl is a simple and secure authorization system which let you to authorize directly in your controllers.
+ActionControl is a simple and secure authentication and authorization system which let you to authenticate and authorize directly in your controllers.
 
 Compatibility
 -------------
 
-I've tested it with a Rails 4.2.5 App but I think it should work with a lot versions of Rails since the Gem uses pretty basic stuff of Rails.
+I've tested it with a Rails 4.2.5 App but I think it should work with a lot versions of Rails since the gem uses just basic stuff of Rails.
 
 Installation
 ------------
@@ -25,8 +25,8 @@ And then `bundle install` and you are ready to go.
 Short tutorial
 --------------
 
-With ActionControl authorization is done in you controllers. To enable authorization in one of your controllers, just add a before action for `authorize!` and the user will be authorized for every call.
-You probably want to control authorization for every controller action you have in your app. To enable this just add the before action to the `ApplicationController`.
+With ActionControl authentication and authorization is done in you controllers. To enable authentication and authorization in one of your controllers, just add a before action for `authenticate!` and `authorize!` and the user has to authenticate and authorize on every call.
+You probably want to control authentication and authorization for every controller action you have in your app. To enable this just add the before action to the `ApplicationController`.
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-If you try to open a page you will get an `ActionControl::AuthorizationNotPerformedError`. This means that you have to instruct ActionControl when a user is authorized and when not. You can do this by creating a method called `authorized?` in your controller.
+If you try to open a page you will get an `ActionControl::AuthenticationNotPerformedError` or `ActionControl::AuthorizationNotPerformedError`. This means that you have to instruct ActionControl when a user is authorized and when not. You can do this by creating a method called `authenticated?` and `authorized?` in your controller.
 
 ```ruby
 class DashboardController < ApplicationController
@@ -55,7 +55,7 @@ class DashboardController < ApplicationController
 end
 ```
 
-If the user is now signed in, he is authorized, otherwise an `ActionControl::NotAuthorizedError` will be raised. Now you just have to catch this error and react accordingly. Rails has the convinient `rescue_from` for this case.
+If the user is now signed in, he is authenticated and authorized if he is an admin, otherwise an `ActionControl::NotAuthenticatedError` or `ActionControl::NotAuthorizedError` will be raised. Now you just have to catch this error and react accordingly. Rails has the convinient `rescue_from` for this case.
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -103,24 +103,28 @@ def authorized?
 end
 ```
 
-This is pretty much everything you have to do for basic authorization! As you can see it's pretty flexible and straightforward to use.
+This is pretty much everything you have to do for basic authentication or authorization! As you can see it's quite flexible and straightforward to use.
 
 Known Issues
 ------------
 
-The authorization is done in a simple before action. Before callbacks are done in a specific order. If you set something which is needed in the `authorized?` method you have to call the before action after the other method again.
+The authorization is done in a simple before action. Before callbacks are done in a specific order. If you set something which is needed in the `authenticate!` or `authorized?` method you have to call the before action after the other method again.
 
 For example if you set `@user` in your controller in the `set_user` before action and you want to use this in `authorized?` action you have to add the `authenticate!` or `authorize!` method after the `set_user` again, otherwise `@user` won't be available in `authenticate!` or `authorized?`.
 
 ```ruby
 class UsersController < ApplicationController
 	before_action :set_user
-	before_action :authorize!
+	before_action :authenticate!, :authorize!
 
 	def show
 	end
 
 	private
+
+	def authenticated?
+		return true if user_signed_in?
+	end
 
 	def authorized?
 		return true if current_user == @user
