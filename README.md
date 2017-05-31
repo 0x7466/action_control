@@ -105,6 +105,50 @@ end
 
 This is pretty much everything you have to do for basic authentication or authorization! As you can see it's quite flexible and straightforward to use.
 
+Pass a custom error hash
+------------------------
+
+You can pass an error hash to the exception and use this in your rescue method:
+
+```ruby
+class ApplicationController < ActionController::Base
+	before_action :authenticate!, :authorize!
+	
+	# ...
+
+	rescue_from ActionControl::NotAuthenticatedError, with: :user_not_authenticated
+	rescue_from ActionControl::NotAuthorizedError, with: :user_not_authorized
+
+	private
+
+	def user_not_authenticated(exception)
+		flash[:danger] = "You are not authenticated! Code: #{exception.error[:code]}"
+		redirect_to root_path
+	end
+
+	def user_not_authorized(exception)
+		flash[:danger] = "You are not authorized to call this action! Code: #{exception.error[:code]}"
+		redirect_to root_path
+	end
+
+	def authenticated?(error)
+		error[:code] = "ERROR"
+		
+		return true if user_signed_in?
+	end
+	
+	def authorized?(error)
+		error[:code] = "ERROR"
+	
+		return true if read_action?    # Everybody is authorized to call read actions
+
+		if write_action?
+			return true if admin_signed_in?		# Just admins are allowed to write something
+		end
+	end
+end
+```
+
 Known Issues
 ------------
 
