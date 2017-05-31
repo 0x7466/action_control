@@ -25,6 +25,11 @@ module ActionControl
 	#    Should always be called at the end
 	#    of the #authorize! method.
 	class NotAuthorizedError < AuthorizationError
+		attr_reader :error
+
+		def initialize(error={})
+			@error = error
+		end
 	end
 
 
@@ -52,5 +57,10 @@ module ActionControl
 	#    Should always be called at the end
 	#    of the #authenticate! method.
 	class NotAuthenticatedError < AuthenticationError
+		attr_reader :error
+
+		def initialize(error={})
+			@error = error
+		end
 	end
 end
