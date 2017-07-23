@@ -30,9 +30,9 @@ You probably want to control authentication and authorization for every controll
 
 ```ruby
 class ApplicationController < ActionController::Base
-	protect_from_forgery with: :exception
+  protect_from_forgery with: :exception
 
-	before_action :authenticate!, :authorize!
+  before_action :authenticate!, :authorize!
 end
 ```
 
@@ -40,18 +40,18 @@ If you try to open a page you will get an `ActionControl::AuthenticationNotPerfo
 
 ```ruby
 class DashboardController < ApplicationController
-	def index
-	end
+  def index
+  end
 
-	private
+  private
 
-	def authenticated?
-		return true if user_signed_in?
-	end
+  def authenticated?
+    return true if user_signed_in?
+  end
 
-	def authorized?
-		return true if current_user.admin?
-	end 
+  def authorized?
+    return true if current_user.admin?
+  end 
 end
 ```
 
@@ -59,22 +59,22 @@ If the user is now signed in, he is authenticated and authorized if he is an adm
 
 ```ruby
 class ApplicationController < ActionController::Base
-	# ...
+  # ...
 
-	rescue_from ActionControl::NotAuthenticatedError, with: :user_not_authenticated
-	rescue_from ActionControl::NotAuthorizedError, with: :user_not_authorized
+  rescue_from ActionControl::NotAuthenticatedError, with: :user_not_authenticated
+  rescue_from ActionControl::NotAuthorizedError, with: :user_not_authorized
 
-	private
+  private
 
-	def user_not_authenticated
-		flash[:danger] = "You are not authenticated!"
-		redirect_to root_path
-	end
+  def user_not_authenticated
+    flash[:danger] = "You are not authenticated!"
+    redirect_to root_path
+  end
 
-	def user_not_authorized
-		flash[:danger] = "You are not authorized to call this action!"
-		redirect_to root_path
-	end
+  def user_not_authorized
+    flash[:danger] = "You are not authorized to call this action!"
+    redirect_to root_path
+  end
 end
 ```
 
@@ -95,11 +95,11 @@ So you can for example do:
 
 ```ruby
 def authorized?
-	return true if read_action?    # Everybody is authorized to call read actions
+  return true if read_action?    # Everybody is authorized to call read actions
 
-	if write_action?
-		return true if admin_signed_in?		# Just admins are allowed to write something
-	end
+  if write_action?
+    return true if admin_signed_in?		# Just admins are allowed to write something
+  end
 end
 ```
 
@@ -112,40 +112,40 @@ You can pass an error hash to the exception and use this in your rescue method:
 
 ```ruby
 class ApplicationController < ActionController::Base
-	before_action :authenticate!, :authorize!
+  before_action :authenticate!, :authorize!
 	
-	# ...
+  # ...
 
-	rescue_from ActionControl::NotAuthenticatedError, with: :user_not_authenticated
-	rescue_from ActionControl::NotAuthorizedError, with: :user_not_authorized
+  rescue_from ActionControl::NotAuthenticatedError, with: :user_not_authenticated
+  rescue_from ActionControl::NotAuthorizedError, with: :user_not_authorized
 
-	private
+  private
 
-	def user_not_authenticated(exception)
-		flash[:danger] = "You are not authenticated! Code: #{exception.error[:code]}"
-		redirect_to root_path
-	end
+  def user_not_authenticated(exception)
+    flash[:danger] = "You are not authenticated! Code: #{exception.error[:code]}"
+    redirect_to root_path
+  end
 
-	def user_not_authorized(exception)
-		flash[:danger] = "You are not authorized to call this action! Code: #{exception.error[:code]}"
-		redirect_to root_path
-	end
+  def user_not_authorized(exception)
+    flash[:danger] = "You are not authorized to call this action! Code: #{exception.error[:code]}"
+    redirect_to root_path
+  end
 
-	def authenticated?(error)
-		error[:code] = "ERROR"
-		
-		return true if user_signed_in?
-	end
+  def authenticated?(error)
+    error[:code] = "ERROR"
+
+    return true if user_signed_in?
+  end
 	
-	def authorized?(error)
-		error[:code] = "ERROR"
-	
-		return true if read_action?    # Everybody is authorized to call read actions
+  def authorized?(error)
+    error[:code] = "ERROR"
 
-		if write_action?
-			return true if admin_signed_in?		# Just admins are allowed to write something
-		end
-	end
+    return true if read_action?    # Everybody is authorized to call read actions
+
+    if write_action?
+      return true if admin_signed_in?		# Just admins are allowed to write something
+    end
+  end
 end
 ```
 
@@ -158,21 +158,21 @@ For example if you set `@user` in your controller in the `set_user` before actio
 
 ```ruby
 class UsersController < ApplicationController
-	before_action :set_user
-	before_action :authenticate!, :authorize!
+  before_action :set_user
+  before_action :authenticate!, :authorize!
 
-	def show
-	end
+  def show
+  end
 
-	private
+  private
 
-	def authenticated?
-		return true if user_signed_in?
-	end
+  def authenticated?
+    return true if user_signed_in?
+  end
 
-	def authorized?
-		return true if current_user == @user
-	end
+  def authorized?
+    return true if current_user == @user
+  end
 end
 ```
 
