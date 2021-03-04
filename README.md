@@ -1,3 +1,6 @@
+# 💀 DEPRECATED 💀
+## 🌟 New awesome Gem with more Features: [Active Entry](https://github.com/TFM-Agency/active_entry)
+
 ActionControl
 =============
 
